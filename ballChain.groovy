@@ -3,6 +3,8 @@ import java.util.stream.Collectors;
 import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
 import eu.mihosoft.vrl.v3d.CSG;
 import eu.mihosoft.vrl.v3d.Cube;
+import eu.mihosoft.vrl.v3d.Cylinder
+import eu.mihosoft.vrl.v3d.Sphere
 CSG generate(){
 	String type= "ballChain"
 	if(args==null)
@@ -22,11 +24,19 @@ CSG generate(){
 	def sourceValue = measurments.source
 	for(String key:measurments.keySet().stream().sorted().collect(Collectors.toList())){
 		println "ballChain value "+key+" "+measurments.get(key);
-}
+	}
+	CSG ball = new Sphere(ballDiameterValue/2).toCSG()
+	CSG cord = new Cylinder(cordDiameterValue/2, centerToCenterValue).toCSG()
+					.roty(-90)
 	// Stub of a CAD object
-	CSG part = new Cube().toCSG()
+	CSG part = ball
+				.union(ball.movex(centerToCenterValue))
+				.union(cord)
+				.union(cord.toXMax())
+				.union(ball.movex(-centerToCenterValue))
+
 	return part
-		.setParameter(size)
-		.setRegenerate({generate()})
+			.setParameter(size)
+			.setRegenerate({generate()})
 }
-return generate() 
+return generate()
